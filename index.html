@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aravind · Issue #1</title>
+<meta name="description" content="Aravind's portfolio: a first-year B.Tech IT student, drawn as a comic book.">
+<meta name="theme-color" content="#f4ecd6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<script>
+/* set theme + intro lock before first paint */
+(function(){
+  var d=document.documentElement, t;
+  d.classList.add('js');
+  try{t=localStorage.getItem('aravind-theme')}catch(e){}
+  if(t!=='day'&&t!=='night') t=matchMedia('(prefers-color-scheme: dark)').matches?'night':'day';
+  d.dataset.theme=t;
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('intro-on');
+})();
+</script>
+<noscript><style>.pop,.name span{opacity:1!important;transform:none!important}#intro{display:none!important}</style></noscript>
+<style>
+/* ============================================================
+   ARAVIND · ISSUE #1  —  World: comic book
+   Colours: yellow, red, teal (+ ink / paper neutrals)
+   Signature move: Day Edition / Night Edition switch
+   ============================================================ */
+@property --r{syntax:'<length>';inherits:false;initial-value:0px}
+
+:root{
+  --yel:#ffc72c; --red:#ee4a35; --teal:#127a88;
+  --black:#16130f; --cream:#fffdf4;
+  --bg:#f4ecd6; --panel:#fffaeb; --chip:#fff3d0;
+  --ink:#16130f; --line:#16130f; --shadow:#16130f;
+  --dot:rgba(22,19,15,.10);
+}
+[data-theme="night"]{
+  --bg:#15171b; --panel:#202329; --chip:#2c3037;
+  --ink:#f2e9d2; --line:#f2e9d2; --shadow:#050607;
+  --dot:rgba(255,199,44,.10);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:12px;-webkit-text-size-adjust:100%}
+html.intro-on{overflow:hidden}
+body{
+  font:700 17px/1.55 'Comic Neue',system-ui,sans-serif;
+  color:var(--ink);
+  background-color:var(--bg);
+  background-image:radial-gradient(var(--dot) 1.4px,transparent 1.8px),radial-gradient(var(--dot) 1.4px,transparent 1.8px);
+  background-size:10px 10px;background-position:0 0,5px 5px;
+  overflow-x:hidden;
+}
+h1,h2,h3,.sfx{font-family:'Bangers',Impact,sans-serif;font-weight:400;letter-spacing:.03em}
+a{color:inherit}
+:focus-visible{outline:4px solid var(--teal);outline-offset:3px}
+[data-theme="night"] :focus-visible{outline-color:var(--yel)}
+.fill{border-bottom:3px dashed var(--red);padding-bottom:1px}
+
+/* ---------- building blocks ---------- */
+.panel{position:relative;background:var(--panel);border:3px solid var(--line);box-shadow:6px 6px 0 var(--shadow);padding:18px 16px;transform:rotate(var(--rot,0deg))}
+.panel>*{position:relative}
+.panel.ht::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.32;
+  background:radial-gradient(var(--tone,var(--red)) 1.7px,transparent 2.1px) 0 0/9px 9px;
+  -webkit-mask:linear-gradient(var(--ang,135deg),#000,transparent 42%);mask:linear-gradient(var(--ang,135deg),#000,transparent 42%)}
+.cap{display:inline-block;background:var(--yel);color:var(--black);border:2px solid var(--line);
+  font:700 13px/1 'Comic Neue',sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:6px 10px 5px;box-shadow:3px 3px 0 var(--shadow)}
+.bubble{position:relative;background:var(--cream);color:var(--black);border:3px solid #16130f;border-radius:26px;padding:16px 20px;box-shadow:5px 5px 0 var(--shadow)}
+.tail{position:absolute;top:100%;width:40px;height:40px;overflow:visible}
+
+.btn{display:inline-flex;align-items:center;gap:10px;font:400 28px/1 'Bangers',sans-serif;letter-spacing:.06em;
+  padding:13px 22px 11px;background:var(--yel);color:var(--black);border:3px solid var(--line);box-shadow:5px 5px 0 var(--shadow);
+  text-decoration:none;cursor:pointer;min-height:48px;
+  transition:transform .2s cubic-bezier(.3,1.6,.5,1),box-shadow .2s}
+.btn.alt{background:var(--red)}
+.btn:hover{transform:translate(-2px,-2px) rotate(-1.2deg);box-shadow:8px 8px 0 var(--shadow)}
+.btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--shadow)}
+.btn svg{width:22px;height:22px;transition:transform .2s}
+.btn:hover svg{transform:translateX(4px)}
+
+/* reveal */
+.js .pop{opacity:0;transform:translateY(22px) scale(.94) rotate(var(--rot,0deg))}
+.js .pop.in{opacity:1;transform:rotate(var(--rot,0deg));
+  transition:opacity .4s ease var(--d,0s),transform .65s cubic-bezier(.2,1.25,.3,1) var(--d,0s)}
+
+/* ---------- Day / Night Edition switch (signature move) ---------- */
+.mode{position:fixed;top:12px;right:12px;z-index:60;display:flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;color:var(--ink);font:400 18px 'Bangers',sans-serif;letter-spacing:.08em}
+.mode .lbl{display:none;background:var(--panel);border:2px solid var(--line);padding:4px 8px 2px;box-shadow:3px 3px 0 var(--shadow)}
+.mode .track{position:relative;width:76px;height:40px;border:3px solid var(--line);background:var(--yel);box-shadow:4px 4px 0 var(--shadow);transition:background .3s;overflow:hidden}
+.mode .knob{position:absolute;top:3px;left:3px;width:28px;height:28px;background:var(--black);display:grid;place-items:center;
+  transition:transform .4s cubic-bezier(.3,1.5,.5,1)}
+.mode svg{width:18px;height:18px;grid-area:1/1;transition:opacity .2s}
+.mode .moon{opacity:0}
+[data-theme="night"] .mode .track{background:#2e3a52}
+[data-theme="night"] .mode .knob{transform:translateX(36px);background:var(--yel)}
+[data-theme="night"] .mode .sun{opacity:0}
+[data-theme="night"] .mode .moon{opacity:1}
+.mode:active .track{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+@media(min-width:560px){.mode .lbl{display:block}}
+
+.wipe{position:fixed;inset:0;z-index:90;display:grid;place-items:center;pointer-events:none;
+  background-image:radial-gradient(rgba(22,19,15,.16) 2px,transparent 2.4px);background-size:12px 12px}
+.wipe b{font:400 clamp(60px,20vw,200px)/1 'Bangers',sans-serif;letter-spacing:.04em;transform:rotate(-6deg);
+  text-shadow:6px 6px 0 #16130f;animation:slam .5s .2s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes slam{from{transform:scale(.3) rotate(-20deg);opacity:0}}
+
+/* ---------- opening: halftone colour-circle reveal ---------- */
+#intro{position:fixed;inset:0;z-index:100;display:none}
+.intro-on #intro{display:block}
+#intro .ring,#intro .ink{position:absolute;inset:0;--r:-40px}
+#intro .ring{background:var(--yel);
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent var(--r),#000 calc(var(--r) + 1px));
+  mask:radial-gradient(circle at 50% 50%,transparent var(--r),#000 calc(var(--r) + 1px))}
+#intro .ink{background:#16130f radial-gradient(rgba(255,199,44,.16) 2px,transparent 2.5px) 0 0/12px 12px;
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent calc(var(--r) + 40px),#000 calc(var(--r) + 41px));
+  mask:radial-gradient(circle at 50% 50%,transparent calc(var(--r) + 40px),#000 calc(var(--r) + 41px))}
+#intro .boom{position:absolute;left:50%;top:50%;width:min(58vw,270px);transform:translate(-50%,-50%);opacity:0}
+#intro .issue-tag{position:absolute;left:50%;top:calc(50% + min(34vw,160px));transform:translateX(-50%) rotate(-3deg);opacity:0;white-space:nowrap}
+#intro.play .ring,#intro.play .ink{animation:hole 1s cubic-bezier(.65,0,.3,1) 1.05s forwards}
+#intro.play .boom{opacity:1;animation:boomIn .5s .1s cubic-bezier(.2,1.5,.4,1) both,boomOut .26s 1s ease-in forwards}
+#intro.play .issue-tag{animation:tagIn .4s .45s cubic-bezier(.2,1.4,.4,1) both,tagOut .2s 1s ease-in forwards}
+#intro.out{opacity:0;transition:opacity .25s}
+@keyframes hole{to{--r:170vmax}}
+@keyframes boomIn{from{transform:translate(-50%,-50%) scale(0) rotate(-28deg)}}
+@keyframes boomOut{to{transform:translate(-50%,-50%) scale(1.9) rotate(9deg);opacity:0}}
+@keyframes tagIn{from{opacity:0;transform:translateX(-50%) translateY(20px) rotate(-3deg)}to{opacity:1}}
+@keyframes tagOut{to{opacity:0}}
+.skip{position:absolute;top:14px;right:14px;z-index:5;display:inline-flex;gap:8px;align-items:center;
+  font:400 22px/1 'Bangers',sans-serif;letter-spacing:.08em;background:var(--yel);color:var(--black);border:3px solid #16130f;
+  box-shadow:4px 4px 0 #000;padding:8px 14px 6px;cursor:pointer;min-height:44px}
+.skip svg{width:16px;height:16px}
+
+/* ---------- landing ---------- */
+.splash{min-height:100svh;display:grid;place-items:center;padding:64px 12px 36px}
+.frame{width:min(100%,1100px);padding:20px 16px 28px;display:grid;gap:16px 28px;--tone:var(--red);--ang:200deg;
+  box-shadow:9px 9px 0 var(--shadow);border-width:4px;
+  grid-template-areas:"issue" "name" "bubble" "mono" "now" "ctas"}
+.issue{grid-area:issue;justify-self:start;transform:rotate(-2deg)}
+.name{grid-area:name;font-size:clamp(60px,23vw,250px);line-height:.9;letter-spacing:.01em;margin:6px 0 4px;
+  text-shadow:3px 3px 0 var(--red),6px 6px 0 var(--shadow);white-space:nowrap}
+.name span{display:inline-block;transform:rotate(var(--a,0deg)) translateY(var(--y,0))}
+.name span:nth-child(1){--a:-3deg;--y:2px}.name span:nth-child(2){--a:2deg;--y:-5px}.name span:nth-child(3){--a:-1deg;--y:3px}
+.name span:nth-child(4){--a:3deg;--y:-2px}.name span:nth-child(5){--a:-2deg;--y:-4px}.name span:nth-child(6){--a:1deg;--y:5px}
+.name span:nth-child(7){--a:-3deg;--y:-1px}
+.js .name span{opacity:0}
+.go .name span{opacity:1;animation:letter .6s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i)*70ms)}
+@keyframes letter{from{opacity:0;transform:translateY(60px) rotate(-24deg) scale(.5)}}
+.tag{grid-area:bubble;justify-self:start;max-width:520px;margin-bottom:44px;font:400 clamp(22px,5.6vw,32px)/1.12 'Bangers',sans-serif;letter-spacing:.03em;text-transform:uppercase}
+.tag .tail{right:64px}
+.mono{grid-area:mono;justify-self:end;width:min(46vw,170px);--rot:6deg;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-right:6px}
+.mono svg{width:100%;height:auto;display:block;overflow:visible}
+.mono-t{font:400 150px 'Bangers',sans-serif;text-anchor:middle}
+.mono.wob{animation:wob .45s}
+@keyframes wob{30%{transform:rotate(-8deg) scale(1.1)}60%{transform:rotate(12deg) scale(.96)}}
+.now{grid-area:now;align-self:start;justify-self:start;background:var(--yel);color:var(--black);border:3px solid var(--line);
+  box-shadow:4px 4px 0 var(--shadow);padding:10px 14px;max-width:440px;transform:rotate(-1deg);font-size:17px}
+.now b{font:400 22px 'Bangers',sans-serif;letter-spacing:.08em;margin-right:6px}
+.ctas{grid-area:ctas;display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding-top:6px}
+@media(min-width:820px){
+  .splash{padding:70px 24px 48px}
+  .frame{padding:30px 40px 44px;grid-template-columns:1.1fr .9fr;grid-template-areas:"issue issue" "name name" "now bubble" "ctas mono";align-items:start}
+  .tag{margin-top:6px}.tag .tail{right:auto;left:96px}
+  .mono{justify-self:start;margin:-10px 0 0 40px;width:min(24vw,240px)}
+  .now{font-size:19px}
+}
+
+/* ---------- pages ---------- */
+.page{width:min(100%,1100px);margin:0 auto;padding:76px 16px 28px}
+.head{display:grid;gap:12px;margin-bottom:34px;justify-items:start}
+.head h2{font-size:clamp(48px,14vw,128px);line-height:.9;text-shadow:4px 4px 0 var(--red);transform:rotate(-1.2deg)}
+.pg{position:absolute;right:12px;top:48px;font:400 34px 'Bangers',sans-serif;color:var(--ink);opacity:.35}
+.turn{display:inline-flex;align-items:center;gap:8px;margin-top:34px;font:400 28px 'Bangers',sans-serif;letter-spacing:.06em;
+  text-decoration:none;border-bottom:4px solid var(--red);padding-bottom:2px}
+.turn svg{width:22px;height:22px;transition:transform .2s}.turn:hover svg{transform:translateX(6px)}
+
+/* about */
+.about{display:grid;gap:30px}
+.stack{display:grid;gap:30px}
+.nar{position:relative;background:var(--panel);border:3px solid var(--line);box-shadow:5px 5px 0 var(--shadow);padding:26px 18px 16px;transform:rotate(var(--rot,0deg))}
+.nar .cap{position:absolute;top:-15px;left:12px}
+.nar p{font-size:18px}
+.art{padding:14px 12px 10px;align-self:start;--rot:2deg;--tone:var(--teal);--ang:315deg}
+.art svg{width:100%;height:auto;display:block}
+.art .caption{font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+@media(min-width:820px){.about{grid-template-columns:1.25fr .75fr;gap:44px}.art{margin-top:56px}.nar p{font-size:19px}}
+
+/* skills */
+.skills{display:grid;gap:34px}
+.skills .panel:nth-child(2){margin-left:22px}
+.skills .panel:nth-child(3){margin-right:14px}
+.stamp{display:inline-block;font:400 32px/1 'Bangers',sans-serif;letter-spacing:.1em;padding:4px 14px 2px;border:4px solid currentColor;transform:rotate(-4deg);margin:0 0 18px -4px}
+.s-c .stamp{color:var(--red)}.s-g .stamp{color:var(--teal)}[data-theme="night"] .s-g .stamp{color:#3fc1d3}.s-l .stamp{color:var(--ink);border-style:dashed}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:12px}
+.chips li{background:var(--chip);color:var(--ink);border:3px solid var(--line);box-shadow:3px 3px 0 var(--shadow);padding:6px 14px 5px;font-size:18px;transform:rotate(var(--rot,0deg))}
+.chips li:nth-child(3n+1){--rot:-1.6deg}.chips li:nth-child(3n+2){--rot:1.2deg}.chips li:nth-child(3n){--rot:-.6deg}
+.s-note{margin-top:14px;font-size:15px;opacity:.85}
+@media(min-width:820px){
+  .skills{grid-template-columns:repeat(12,1fr);align-items:start;gap:30px}
+  .s-c{grid-column:1/6}.s-g{grid-column:6/10;margin:50px 0 0!important}.s-l{grid-column:10/13;margin:16px 0 0!important}
+}
+
+/* journey */
+.strip{display:grid;gap:34px}
+.step{padding:0;overflow:visible}
+.step h3{font-size:34px;line-height:1;padding:12px 16px 8px;border-bottom:3px solid var(--line);color:var(--black);letter-spacing:.05em}
+.step .n{float:right;font-size:40px;line-height:.9;opacity:.45}
+.step ul{list-style:none;display:grid;gap:12px;padding:16px 16px 18px}
+.step li{position:relative;padding-left:24px}
+.step li::before{content:"";position:absolute;left:2px;top:.5em;width:10px;height:10px;background:var(--red);transform:rotate(45deg)}
+.st1 h3{background:var(--yel)}.st2 h3{background:var(--red)}.st3 h3{background:var(--teal);color:var(--cream)}
+.strip .step:nth-child(2){margin-left:20px}.strip .step:nth-child(3){margin-right:12px}
+@media(min-width:820px){
+  .strip{grid-template-columns:repeat(3,1fr);gap:36px;align-items:start}
+  .strip .step:nth-child(n){margin:0}.strip .step:nth-child(2){margin-top:46px}.strip .step:nth-child(3){margin-top:92px}
+}
+
+/* beyond code */
+.beyond{display:grid;gap:56px;padding-bottom:24px}
+.b1 .bubble{font-size:19px}
+.b1 .tail{left:48px}
+.b1 h3{font-size:32px;margin-bottom:6px;letter-spacing:.05em}
+.thought{position:relative;background:var(--cream);color:var(--black);border:3px solid #16130f;border-radius:46px;padding:26px 28px;box-shadow:5px 5px 0 var(--shadow);max-width:430px;justify-self:end;font-size:19px}
+.thought::before,.thought::after{content:"";position:absolute;background:var(--cream);border:3px solid #16130f;border-radius:50%}
+.thought::before{width:24px;height:24px;left:44px;bottom:-34px}
+.thought::after{width:13px;height:13px;left:30px;bottom:-56px}
+.thought h3{font-size:30px;letter-spacing:.05em;margin-bottom:4px}
+.shout{position:relative;display:grid;place-items:center;text-align:center;min-height:250px;padding:56px 44px;color:var(--black);max-width:470px;font-size:19px}
+.shout svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.shout div{position:relative}
+.shout h3{font-size:40px;line-height:1;color:var(--red);text-shadow:2px 2px 0 var(--black);margin-bottom:4px;letter-spacing:.06em}
+@media(min-width:820px){.beyond{grid-template-columns:1fr 1fr;gap:70px 50px;align-items:center}.shout{grid-column:1/-1;justify-self:center}}
+
+/* contact */
+.links{display:grid;gap:22px;max-width:760px}
+.link{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px 16px;border:3px solid var(--line);
+  box-shadow:6px 6px 0 var(--shadow);text-decoration:none;color:var(--black);transform:rotate(var(--rot,0deg));
+  transition:transform .25s cubic-bezier(.3,1.6,.5,1),box-shadow .25s}
+.link:hover{transform:translate(-3px,-3px) rotate(calc(var(--rot,0deg) * -1));box-shadow:10px 10px 0 var(--shadow)}
+.link:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--shadow)}
+.link .t{font:400 clamp(36px,9vw,52px)/1 'Bangers',sans-serif;letter-spacing:.05em;display:block}
+.link .h{font-size:16px;word-break:break-word}
+.link .fill{border-color:#16130f}
+.link svg{width:34px;height:34px;flex:none;transition:transform .25s}.link:hover svg{transform:translate(4px,-4px)}
+.l1{background:var(--yel)}.l2{background:var(--red)}.l3{background:var(--teal);color:var(--cream)}.l3 .fill{border-color:var(--cream)}
+.links .link:nth-child(2){margin-left:min(8vw,64px)}
+.end{padding:60px 16px 70px;display:grid;gap:12px;justify-items:start;width:min(100%,1100px);margin:0 auto}
+.tbc{font:400 clamp(40px,10vw,84px)/1 'Bangers',sans-serif;letter-spacing:.05em;background:var(--yel);color:var(--black);
+  padding:14px 56px 10px 22px;clip-path:polygon(0 0,calc(100% - 38px) 0,100% 50%,calc(100% - 38px) 100%,0 100%)}
+.end small{font-size:14px;opacity:.8}
+
+/* easter egg */
+dialog{margin:auto;border:3px solid var(--line);background:var(--panel);color:var(--ink);width:min(440px,calc(100vw - 28px));padding:26px 20px 20px;box-shadow:9px 9px 0 var(--shadow)}
+dialog[open]{animation:eggIn .45s cubic-bezier(.2,1.5,.4,1)}
+dialog::backdrop{background:rgba(12,10,8,.72) radial-gradient(rgba(255,199,44,.18) 2px,transparent 2.5px) 0 0/12px 12px}
+dialog h3{font-size:54px;line-height:.95;margin:14px 0 10px;color:var(--red);text-shadow:3px 3px 0 var(--shadow)}
+dialog p{margin-bottom:18px}
+@keyframes eggIn{from{transform:scale(.5) rotate(-8deg);opacity:0}}
+.fly{position:fixed;z-index:120;font:400 clamp(44px,13vw,100px)/1 'Bangers',sans-serif;color:var(--c);text-shadow:4px 4px 0 #16130f;pointer-events:none;
+  animation:fly 1.2s both cubic-bezier(.2,1.4,.4,1)}
+@keyframes fly{0%{transform:scale(0) rotate(var(--rz));opacity:0}25%{opacity:1;transform:scale(1.1) rotate(var(--rz))}75%{opacity:1;transform:scale(1) rotate(var(--rz))}100%{opacity:0;transform:translateY(-36px) scale(1.2) rotate(var(--rz))}}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .pop,.js .name span{opacity:1!important;transform:rotate(var(--rot,0deg))!important}
+  .name span{transform:rotate(var(--a,0deg)) translateY(var(--y,0))!important}
+}
+</style>
+</head>
+<body>
+
+<!-- shared SVG defs: halftone pattern + fade mask for bursts -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="4.5" cy="4.5" r="2.1" fill="#ee4a35"/></pattern>
+    <linearGradient id="fadeg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset=".65" stop-color="#000"/></linearGradient>
+    <mask id="fade" maskUnits="userSpaceOnUse" x="-120" y="-120" width="240" height="240"><rect x="-120" y="-120" width="240" height="240" fill="url(#fadeg)"/></mask>
+  </defs>
+</svg>
+
+<!-- ============ OPENING ============ -->
+<div id="intro" aria-hidden="true">
+  <div class="ring"></div>
+  <div class="ink"></div>
+  <div class="boom">
+    <svg viewBox="-110 -110 220 220" style="width:100%;height:auto;overflow:visible">
+      <polygon data-burst="13" data-ro="100" data-ri="70" fill="#000" transform="translate(8 9)"/>
+      <polygon data-burst="13" data-ro="100" data-ri="70" fill="#ffc72c" stroke="#16130f" stroke-width="5" stroke-linejoin="round"/>
+      <polygon data-burst="13" data-ro="100" data-ri="70" fill="url(#dots)" mask="url(#fade)"/>
+      <text x="6" y="55" class="mono-t" font-size="150" fill="#ee4a35" font-family="Bangers" text-anchor="middle">A</text>
+      <text x="0" y="50" class="mono-t" font-size="150" fill="#16130f" font-family="Bangers" text-anchor="middle">A</text>
+    </svg>
+  </div>
+  <span class="cap issue-tag">Issue #1 · Aravind</span>
+  <button class="skip" id="skip" type="button">Skip
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"><path d="M3 3l7 7-7 7M11 3l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<!-- ============ SIGNATURE MOVE: Day / Night Edition ============ -->
+<button class="mode" id="mode" type="button" aria-pressed="false" aria-label="Switch between Day Edition and Night Edition">
+  <span class="lbl" id="modeLbl">Day edition</span>
+  <span class="track"><span class="knob">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="#ffc72c" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#ffc72c"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="#16130f"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+  </span></span>
+</button>
+
+<main>
+<!-- ============ LANDING ============ -->
+<header class="splash" id="top">
+  <div class="frame panel ht">
+    <span class="cap issue">Issue #1 · First-year B.Tech IT</span>
+
+    <h1 class="name" aria-label="Aravind">
+      <span style="--i:0" aria-hidden="true">A</span><span style="--i:1" aria-hidden="true">R</span><span style="--i:2" aria-hidden="true">A</span><span style="--i:3" aria-hidden="true">V</span><span style="--i:4" aria-hidden="true">I</span><span style="--i:5" aria-hidden="true">N</span><span style="--i:6" aria-hidden="true">D</span>
+    </h1>
+
+    <div class="bubble tag pop" style="--d:.5s">
+      <p>I'm learning to build things that work, and to make them look like someone cared.</p>
+      <svg class="tail" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 0L8 38 34 0Z" fill="#fffdf4"/><path d="M3 0L8 38 34 0" fill="none" stroke="#16130f" stroke-width="3" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="mono pop" id="mono" style="--d:.7s" role="img" aria-label="Monogram: the letter A in a comic burst">
+      <svg viewBox="-110 -110 220 220">
+        <polygon data-burst="13" data-ro="100" data-ri="70" fill="#16130f" transform="translate(8 9)"/>
+        <polygon data-burst="13" data-ro="100" data-ri="70" fill="#ffc72c" stroke="#16130f" stroke-width="5" stroke-linejoin="round"/>
+        <polygon data-burst="13" data-ro="100" data-ri="70" fill="url(#dots)" mask="url(#fade)"/>
+        <text x="6" y="55" class="mono-t" fill="#ee4a35">A</text>
+        <text x="0" y="50" class="mono-t" fill="#16130f">A</text>
+      </svg>
+    </div>
+
+    <p class="now pop" style="--d:.9s"><b>Currently…</b> finishing this first issue, and working out what comes next.</p>
+
+    <div class="ctas pop" style="--d:1.05s">
+      <a class="btn" href="#about">Explore
+        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"><path d="M3 11h15M12 4l7 7-7 7"/></svg></a>
+      <a class="btn alt" href="#contact">Say hi</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ ABOUT ============ -->
+<section class="page" id="about" aria-labelledby="h-about">
+  <span class="pg" aria-hidden="true">02</span>
+  <div class="head pop"><span class="cap">Page 02 · About</span><h2 id="h-about">Hi, I'm Aravind.</h2></div>
+  <div class="about">
+    <div class="stack">
+      <div class="nar pop" style="--rot:-.6deg"><span class="cap">Meanwhile…</span>
+        <p>I'm a first-year B.Tech student in Information Technology. A terminal window used to look like a locked door to me; now it looks like a door I'm getting better at opening.</p></div>
+      <div class="nar pop" style="--rot:.5deg;margin-left:14px"><span class="cap">Then…</span>
+        <p><span class="fill">[One or two sentences: what first got you into building things?]</span></p></div>
+      <div class="nar pop" style="--rot:-.4deg"><span class="cap">Now…</span>
+        <p>What I love most is the moment something finally works after an hour of refusing to. I'm collecting those moments, and this page is the first issue.</p></div>
+    </div>
+    <figure class="panel ht art pop" aria-label="Illustration of a laptop saying hello, world">
+      <svg viewBox="0 0 280 230" role="img" aria-label="A laptop saying hello, world">
+        <g stroke="var(--line)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+          <rect x="20" y="10" width="170" height="64" rx="16" fill="#fffdf4"/>
+          <path d="M66 72L80 108 104 72Z" fill="#fffdf4" stroke="none"/>
+          <path d="M66 73L80 108 104 73" fill="none"/>
+          <rect x="50" y="112" width="180" height="88" rx="6" fill="#16130f"/>
+          <path d="M30 200H250L234 224H46Z" fill="#ffc72c"/>
+          <g stroke-width="6">
+            <path d="M68 133h54" stroke="#ffc72c"/><path d="M80 150h86" stroke="#2fb1c2"/>
+            <path d="M80 167h40" stroke="#ee4a35"/><path d="M68 184h70" stroke="#fffdf4"/>
+          </g>
+          <g stroke-width="3.5"><path d="M214 28l16-10M218 46l22-2M212 64l16 10"/></g>
+        </g>
+        <text x="105" y="50" text-anchor="middle" font-family="Bangers" font-size="28" fill="#16130f" letter-spacing="1">hello, world</text>
+      </svg>
+      <figcaption class="caption sfx">Fig. 1 — the first thing every program says</figcaption>
+    </figure>
+  </div>
+  <a class="turn" href="#skills">Turn the page <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"><path d="M3 11h15M12 4l7 7-7 7"/></svg></a>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section class="page" id="skills" aria-labelledby="h-skills">
+  <span class="pg" aria-hidden="true">03</span>
+  <div class="head pop"><span class="cap">Page 03 · Skills</span><h2 id="h-skills">What's in the toolbox</h2></div>
+  <div class="skills">
+    <div class="panel ht s-c pop" style="--rot:-.8deg;--tone:var(--red)">
+      <span class="stamp">Comfortable</span>
+      <ul class="chips"><li>HTML</li><li>CSS</li><li>Reading error messages</li></ul>
+    </div>
+    <div class="panel ht s-g pop" style="--rot:.8deg;--tone:var(--teal);--d:.1s">
+      <span class="stamp">Getting there</span>
+      <ul class="chips"><li>JavaScript</li><li>Python</li><li>C</li></ul>
+    </div>
+    <div class="panel ht s-l pop" style="--rot:-.5deg;--tone:var(--yel);--d:.2s">
+      <span class="stamp">Learning</span>
+      <ul class="chips"><li>Git</li><li>SQL</li><li>Data structures</li></ul>
+    </div>
+  </div>
+  <p class="s-note pop"><span class="fill">[Edit this page so every skill sits at the level that's honestly true for you.]</span></p>
+  <a class="turn" href="#journey">Turn the page <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"><path d="M3 11h15M12 4l7 7-7 7"/></svg></a>
+</section>
+
+<!-- ============ JOURNEY ============ -->
+<section class="page" id="journey" aria-labelledby="h-journey">
+  <span class="pg" aria-hidden="true">04</span>
+  <div class="head pop"><span class="cap">Page 04 · Journey</span><h2 id="h-journey">Three panels, one story</h2></div>
+  <div class="strip">
+    <article class="panel step st1 pop" style="--rot:-1deg">
+      <h3><span class="n" aria-hidden="true">1</span>I made</h3>
+      <ul><li>This portfolio: one HTML file, drawn by hand in CSS and SVG.</li><li><span class="fill">[A project, assignment or experiment you're proud of]</span></li></ul>
+    </article>
+    <article class="panel step st2 pop" style="--rot:.8deg;--d:.1s">
+      <h3><span class="n" aria-hidden="true">2</span>I'm learning</h3>
+      <ul><li>Data structures, and how to think in them.</li><li>JavaScript beyond copy and paste.</li><li><span class="fill">[Something you're curious about right now]</span></li></ul>
+    </article>
+    <article class="panel step st3 pop" style="--rot:-.6deg;--d:.2s">
+      <h3><span class="n" aria-hidden="true">3</span>I want to build</h3>
+      <ul><li><span class="fill">[A dream project]</span></li><li><span class="fill">[A tool that would have helped past-you]</span></li></ul>
+    </article>
+  </div>
+  <a class="turn" href="#beyond">Turn the page <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"><path d="M3 11h15M12 4l7 7-7 7"/></svg></a>
+</section>
+
+<!-- ============ BEYOND CODE ============ -->
+<section class="page" id="beyond" aria-labelledby="h-beyond">
+  <span class="pg" aria-hidden="true">05</span>
+  <div class="head pop"><span class="cap">Page 05 · Beyond code</span><h2 id="h-beyond">Off the keyboard</h2></div>
+  <div class="beyond">
+    <div class="b1 pop" style="--rot:-1.2deg">
+      <div class="bubble"><h3>What I do for fun</h3><p><span class="fill">[Your main hobby, and why you love it]</span></p>
+        <svg class="tail" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 0L8 38 34 0Z" fill="#fffdf4"/><path d="M3 0L8 38 34 0" fill="none" stroke="#16130f" stroke-width="3" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="thought pop" style="--rot:1.2deg;--d:.1s"><h3>Thinking about…</h3><p><span class="fill">[A thing you think about far too much]</span></p></div>
+    <div class="shout pop" style="--rot:-1deg;--d:.15s">
+      <svg viewBox="-105 -105 210 210" preserveAspectRatio="none" aria-hidden="true">
+        <polygon data-burst="15" data-ro="100" data-ri="74" fill="#16130f" transform="translate(5 6)" vector-effect="non-scaling-stroke"/>
+        <polygon data-burst="15" data-ro="100" data-ri="74" fill="#fffdf4" stroke="#16130f" stroke-width="4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div><h3>Fun fact!</h3><p><span class="fill">[A surprising, true fact about you]</span></p></div>
+    </div>
+  </div>
+  <a class="turn" href="#contact">Turn the page <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"><path d="M3 11h15M12 4l7 7-7 7"/></svg></a>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="page" id="contact" aria-labelledby="h-contact">
+  <span class="pg" aria-hidden="true">06</span>
+  <div class="head pop"><span class="cap">Page 06 · Contact</span><h2 id="h-contact">Say hi.</h2></div>
+  <div class="links">
+    <!-- EDIT the three href values below -->
+    <a class="link l1 pop" style="--rot:-1deg" href="mailto:your.email@example.com"><span><span class="t">Email</span><span class="h"><span class="fill">your.email@example.com</span></span></span>
+      <svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square"><path d="M8 26L26 8M11 8h15v15"/></svg></a>
+    <a class="link l2 pop" style="--rot:.8deg;--d:.1s" href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener"><span><span class="t">LinkedIn</span><span class="h"><span class="fill">linkedin.com/in/your-handle</span></span></span>
+      <svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square"><path d="M8 26L26 8M11 8h15v15"/></svg></a>
+    <a class="link l3 pop" style="--rot:-.6deg;--d:.2s" href="https://github.com/your-handle" target="_blank" rel="noopener"><span><span class="t">GitHub</span><span class="h"><span class="fill">github.com/your-handle</span></span></span>
+      <svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square"><path d="M8 26L26 8M11 8h15v15"/></svg></a>
+  </div>
+</section>
+</main>
+
+<footer class="end">
+  <div class="tbc pop">To be continued…</div>
+  <small>© 2026 Aravind · Drawn with CSS, SVG and a lot of tries.</small>
+</footer>
+
+<dialog id="egg" aria-labelledby="eggT">
+  <span class="cap">Secret panel · Issue #0</span>
+  <h3 id="eggT">You found it.</h3>
+  <p>Before Issue #1 there was one line on a black screen: <b>hello, world</b>. Everything on this page grew out of a moment like that one. Thanks for reading the small print.</p>
+  <button class="btn" id="eggx" type="button">Back to the story</button>
+</dialog>
+
+<script>
+(function(){
+  var root=document.documentElement, body=document.body;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- hand-jittered comic bursts ---- */
+  document.querySelectorAll('[data-burst]').forEach(function(el){
+    var n=+el.dataset.burst, ro=+(el.dataset.ro||100), ri=+(el.dataset.ri||70), pts=[];
+    for(var i=0;i<n*2;i++){
+      var a=Math.PI*i/n-Math.PI/2, r=(i%2?ri:ro)+(((i*37)%7)-3)*2.2;
+      pts.push((Math.cos(a)*r).toFixed(1)+','+(Math.sin(a)*r).toFixed(1));
+    }
+    el.setAttribute('points',pts.join(' '));
+  });
+
+  /* ---- scroll reveal ---- */
+  var io=null, started=false;
+  function startReveal(){
+    if(started) return; started=true;
+    var els=document.querySelectorAll('.pop');
+    if(reduce||!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+    io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(e){io.observe(e)});
+  }
+
+  /* ---- opening animation (≈2.1s, plays once, skippable) ---- */
+  var intro=document.getElementById('intro'), t1, t2, opened=false;
+  function openPage(){ if(opened)return; opened=true; body.classList.add('go'); startReveal(); }
+  function endIntro(fast){
+    clearTimeout(t1); clearTimeout(t2);
+    openPage();
+    root.classList.remove('intro-on');
+    if(fast){intro.classList.add('out');setTimeout(function(){intro.remove()},280)} else intro.remove();
+  }
+  if(reduce||!intro){ if(intro)intro.remove(); root.classList.remove('intro-on'); openPage(); }
+  else{
+    var fontsReady=Promise.race([(document.fonts&&document.fonts.ready)||Promise.resolve(),new Promise(function(r){setTimeout(r,700)})]);
+    fontsReady.then(function(){
+      if(opened) return;
+      intro.classList.add('play');
+      t1=setTimeout(openPage,1550);
+      t2=setTimeout(function(){endIntro(false)},2150);
+    });
+    document.getElementById('skip').addEventListener('click',function(){endIntro(true)});
+    addEventListener('keydown',function(e){if(e.key==='Escape'&&!opened)endIntro(true)});
+  }
+
+  /* ---- Day / Night Edition switch ---- */
+  var btn=document.getElementById('mode'), lbl=document.getElementById('modeLbl'), busy=false;
+  function apply(t){
+    root.dataset.theme=t;
+    btn.setAttribute('aria-pressed',t==='night');
+    lbl.textContent=t==='night'?'Night edition':'Day edition';
+    var m=document.querySelector('meta[name=theme-color]'); if(m)m.content=t==='night'?'#15171b':'#f4ecd6';
+    try{localStorage.setItem('aravind-theme',t)}catch(e){}
+  }
+  apply(root.dataset.theme);
+  btn.addEventListener('click',function(e){
+    if(busy)return;
+    var next=root.dataset.theme==='night'?'day':'night';
+    if(reduce||!Element.prototype.animate){apply(next);return;}
+    busy=true;
+    var rc=btn.getBoundingClientRect();
+    var x=e.clientX||rc.left+rc.width/2, y=e.clientY||rc.top+rc.height/2;
+    var R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))+20;
+    var w=document.createElement('div'); w.className='wipe';
+    w.style.background=next==='night'?'#15171b':'#f4ecd6';
+    var word=document.createElement('b');
+    word.textContent=next==='night'?'KA-CHUNK!':'FLASH!';
+    word.style.color=next==='night'?'#ffc72c':'#ee4a35';
+    w.appendChild(word); document.body.appendChild(w);
+    w.animate([{clipPath:'circle(0px at '+x+'px '+y+'px)'},{clipPath:'circle('+R+'px at '+x+'px '+y+'px)'}],
+      {duration:700,easing:'cubic-bezier(.65,0,.25,1)',fill:'forwards'}).finished
+    .then(function(){apply(next);return w.animate([{opacity:1},{opacity:0}],{duration:380,fill:'forwards'}).finished})
+    .then(function(){w.remove();busy=false})
+    .catch(function(){apply(next);w.remove();busy=false});
+  });
+
+  /* ---- easter egg: type "pow", or tap the monogram five times ---- */
+  var dlg=document.getElementById('egg'), buf='', taps=0, tapT;
+  function sfx(){
+    if(reduce)return;
+    var words=['POW!','BAM!','ZAP!','KAPOW!','WHAM!','BOOM!'], cols=['var(--yel)','var(--red)','var(--teal)'];
+    for(var i=0;i<9;i++){
+      var s=document.createElement('span'); s.className='fly'; s.textContent=words[i%words.length];
+      s.style.cssText='left:'+(4+Math.random()*72)+'vw;top:'+(12+Math.random()*68)+'vh;--c:'+cols[i%3]+';--rz:'+((Math.random()*40-20)|0)+'deg;animation-delay:'+(i*70)+'ms';
+      body.appendChild(s); (function(n){setTimeout(function(){n.remove()},1900)})(s);
+    }
+  }
+  function egg(){
+    if(dlg.open)return;
+    sfx();
+    setTimeout(function(){ if(!dlg.open && dlg.showModal) dlg.showModal(); },reduce?0:500);
+  }
+  addEventListener('keydown',function(e){
+    if(e.key&&e.key.length===1&&!e.metaKey&&!e.ctrlKey){buf=(buf+e.key.toLowerCase()).slice(-3);if(buf==='pow'){buf='';egg();}}
+  });
+  var mono=document.getElementById('mono');
+  mono.addEventListener('click',function(){
+    mono.classList.remove('wob'); void mono.offsetWidth; mono.classList.add('wob');
+    taps++; clearTimeout(tapT); tapT=setTimeout(function(){taps=0},1600);
+    if(taps>=5){taps=0;egg();}
+  });
+  document.getElementById('eggx').addEventListener('click',function(){dlg.close()});
+  dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
+})();
+</script>
+</body>
+</html>
